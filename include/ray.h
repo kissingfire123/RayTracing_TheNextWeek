@@ -36,7 +36,7 @@ class ray {
     private:
         point3 orig = point3(0,0,0);
         vec3 dir = vec3(0,0,0);
-        double tm = 0;
+        double tm = 0;//for simulating motion blur
 };
 
 #endif

@@ -29,12 +29,19 @@ public:
         vertical_   = 2 * half_height * v_ * focus_dis;
     }
 
+    void set_time_interval(float t1, float t2) {
+        t1_ = t1;
+        t2_ = t2;
+    }
+
     // for antiliasing,move the origin,simu multi-rays for same one pixel 
     ray get_ray(float s, float t){
         vec3 rd = lens_radius_ * camera::random_unit_disk();
         vec3 offset = u_ * rd.x() + v_ * rd.y();
         vec3 offsetOrigin = origin_ + offset;//Ch11之前,offset都为0,即没有散焦
-        return ray(offsetOrigin, lower_left_corner_ + s * horizontal_ + t * vertical_ - offsetOrigin);
+        return ray(offsetOrigin, 
+            lower_left_corner_ + s * horizontal_ + t * vertical_ - offsetOrigin,
+            random_double(t1_,t2_));//return a random ray[t1,t2] 
     }
 
     // 为了模拟散焦现象,将点光源扩散成区域圆盘光源(x,y,0),其中x,y均[-1,1]
@@ -58,6 +65,8 @@ private:
     vec3 v_ = vec3(0.0, 0.0, 0.0);  
     vec3 w_ = vec3(0.0, 0.0, 0.0); 
     float lens_radius_ = 0.0;//模拟光圈尺寸,可以控制散焦的程度
+    float t1_ = 0.f;// time start
+    float t2_ = 0.f;// time close
 };
 
 

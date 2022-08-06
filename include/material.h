@@ -15,7 +15,7 @@ public:
     lambertian(const vec3 & a): albedo_(a){}
     virtual bool  scatter(const ray& r_in,const hit_record& reco,vec3& attenuation, ray & scattered) const override {
         vec3 target = reco.p_  + reco.normal_ + random_in_unit_sphere();
-        scattered = ray(reco.p_ , target - reco.p_);
+        scattered = ray(reco.p_ , target - reco.p_,r_in.time());
         attenuation = albedo_;
         return true;
     }
@@ -29,7 +29,7 @@ public:
     metal(const vec3& a, double f = 0.0): albedo_(a),fuzz_(fmin(f,1)){}
     virtual bool  scatter(const ray& r_in,const hit_record& reco,vec3& attenuation, ray & scattered) const override {
         vec3 reflected = metal::_reflect(unit_vector(r_in.direction()), reco.normal_);
-        scattered = ray(reco.p_ ,reflected + fuzz_ *random_in_unit_sphere());
+        scattered = ray(reco.p_ ,reflected + fuzz_ *random_in_unit_sphere(),r_in.time());
         attenuation = albedo_;
         return dot(scattered.direction(), reco.normal_) > 0;
     }
@@ -67,11 +67,11 @@ public:
             outDirection = refract(unit_direction,reco.normal_,ni_over_nt);
         }
 
-        scattered = ray(reco.p_,outDirection);
+        scattered = ray(reco.p_,outDirection,r_in.time());
         return true;
     }
 private:
-    float ref_idx_ ;
+    float ref_idx_ = 0.f ;
 
 
     //  入射光线v, 法线n, 相对折射率ni_over_nt
